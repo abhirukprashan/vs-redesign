@@ -673,6 +673,7 @@ body.is-home .page_content_wrap::before {
 }
 
 .fgServices_media video,
+.fgServices_media img,
 .fgCard img,
 .fgCard video,
 .fgShot img {

@@ -33,10 +33,10 @@ const STATS = [
 const SERVICE_ORDER = [ 'web-app-development', 'digital-retainers', 'branding-strategy', 'tv-commercials', 'reels-tiktok' ];
 const SERVICES = SERVICE_ORDER.map( ( slug ) => data.serviceList.find( ( s ) => s[ 0 ] === slug ) );
 
-/* Each service's film: the studio video that shows that kind of work, with its cover as the poster. */
+/* Each service's media: the studio video (or still) that shows that kind of work. */
 const clip = ( path ) => ( { src: `/assets/${ path }.mp4`, poster: `/assets/${ path }.jpg` } );
-const SERVICE_VIDEO = {
-	'web-app-development': clip( 'smm/waga-web-01' ), // Waga web film
+const SERVICE_MEDIA = {
+	'web-app-development': { img: '/assets/social/ai-ready-websites.jpg' }, // AI-ready websites still
 	'digital-retainers': clip( 'social/marketing-facts' ), // "10 Marketing Facts"
 	'branding-strategy': clip( 'smm/hayleys-film' ), // Hayleys brand film
 	'tv-commercials': clip( 'social/video-formats' ), // commercials, brand films and corporate videos
@@ -65,6 +65,13 @@ function LoopVideo( { src, poster, label } ) {
 		return () => io.disconnect();
 	}, [] );
 	return <video ref={ ref } src={ src } poster={ poster } muted loop playsInline preload="metadata" aria-label={ label } />;
+}
+
+/* A service's film, or a still when that discipline is better shown with one. */
+function ServiceMedia( media ) {
+	return media.img
+		? <img src={ media.img } alt="" loading="lazy" decoding="async" />
+		: <LoopVideo { ...media } />;
 }
 
 /* Five of the flagship projects; each card opens its post. */
@@ -190,7 +197,7 @@ function Services() {
 				.from( '.fgServices_head > *', { y: 50, opacity: 0, duration: 0.9, ease: 'expo.out', stagger: 0.1 } )
 				.from( '.fgServices_stage', { y: 70, opacity: 0, duration: 1, ease: 'expo.out' }, 0.2 )
 				.from( first.querySelector( '.fgServices_media' ), { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut', clearProps: 'clipPath' }, 0.3 )
-				.from( first.querySelector( '.fgServices_media video' ), { scale: 1.25, duration: 1.5, ease: 'expo.out' }, 0.4 );
+				.from( first.querySelector( '.fgServices_media video, .fgServices_media img' ), { scale: 1.25, duration: 1.5, ease: 'expo.out' }, 0.4 );
 		}, section );
 		return () => ctx.revert();
 	}, [] );
@@ -212,7 +219,7 @@ function Services() {
 							<TLink to={ link } className="fgBtn fgBtn--line" aria-label={ `See more: ${ name }` }>See more</TLink>
 						</div>
 						<TLink to={ link } className="fgServices_media" tabIndex={ -1 } aria-hidden="true">
-							<LoopVideo { ...SERVICE_VIDEO[ slug ] } />
+							<ServiceMedia { ...SERVICE_MEDIA[ slug ] } />
 						</TLink>
 					</article>
 				) ) }
